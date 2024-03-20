@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "584659711202",
+    "firebase_url": "https://second-firebase-bc843-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "second-firebase-bc843",
+    "storage_bucket": "second-firebase-bc843.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584659711202:android:ef5852224534ba40155abb",
+        "android_client_info": {
+          "package_name": "app.fatoumata.safarytravel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkaw-zmfBQSXdqKqMXCQ1GR_Mv8sFlJhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:584659711202:android:134115776822319a155abb",
+        "android_client_info": {
+          "package_name": "com.example.secondfirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkaw-zmfBQSXdqKqMXCQ1GR_Mv8sFlJhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

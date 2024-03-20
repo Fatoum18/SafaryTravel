@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Safari Travel</string>
+    <string name="login">Login</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="registor">registor</string>
+    <string name="register">register</string>
+    <string name="clic_to_login">Clic to login</string>
+    <string name="clic_to_register">clic_to_register</string>
+</resources>
