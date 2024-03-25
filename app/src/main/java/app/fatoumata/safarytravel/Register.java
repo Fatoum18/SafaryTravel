@@ -23,9 +23,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class Register extends AppCompatActivity {
 
-    TextInputEditText editTextEmail, editTextPassword;
+    TextInputEditText editTextEmail, editTextPassword, editTextName;
     Button buttonReg;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
@@ -51,9 +53,11 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
+        editTextName = findViewById(R.id.name);
         buttonReg = findViewById(R.id.btn_register);
         progressBar = findViewById(R.id.progressBar);
         textView = findViewById(R.id.loginNow);
+        progressBar.setVisibility(View.GONE);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,10 +71,16 @@ public class Register extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
-                String email, password;
+                String email, password, name;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
+                name = String.valueOf(editTextName.getText());
 
+                /*if (TextUtils.isEmpty(name))
+                {
+                    Toast.makeText(Register.this, "Enter name", Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
                 if (TextUtils.isEmpty(email))
                 {
                     Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
@@ -82,6 +92,8 @@ public class Register extends AppCompatActivity {
                     Toast.makeText(Register.this, "Enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                progressBar.setVisibility(View.VISIBLE);
 
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -98,9 +110,10 @@ public class Register extends AppCompatActivity {
 
 
                                 } else {
+
                                     // If sign in fails, display a message to the user.
 
-                                    Toast.makeText(Register.this, "Authentication failed.",
+                                    Toast.makeText(Register.this, Objects.requireNonNull(task.getException()).getMessage(),
                                             Toast.LENGTH_SHORT).show();
 
                                 }
