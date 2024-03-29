@@ -13,6 +13,7 @@
     <string name="m_profil">My profil</string>
     <string name="home_title">Choose country were to go</string>
     <string name="title_activity_country">CountryActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_country_info">Info</string>
+    <string name="tab_all_photos">All Photos</string>
+    <string name="tab_my_photos">My photos</string>
 </resources>

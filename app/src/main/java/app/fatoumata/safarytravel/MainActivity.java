@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  CountryAdapter.CountrAdapterListener{
 
     FirebaseAuth auth;
     TextView textView;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(response.body()!=null){
                     List<CountryModel> list =    Converter.countryDtosToModels(response.body());
-                    CountryAdapter countryAdapter =  new CountryAdapter(MainActivity.this,list);
+                    CountryAdapter countryAdapter =  new CountryAdapter(MainActivity.this,list,MainActivity.this);
                     countryGridView.setAdapter(countryAdapter);
 
                 }
@@ -112,5 +112,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCountryClick(CountryModel countryModel) {
+
+        CountryActivity.startActivity(this,countryModel);
     }
 }

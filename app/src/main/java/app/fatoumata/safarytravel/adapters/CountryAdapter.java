@@ -20,10 +20,18 @@ import java.util.List;
 import app.fatoumata.safarytravel.R;
 import app.fatoumata.safarytravel.models.CountryModel;
 
+
+
 public class CountryAdapter extends ArrayAdapter<CountryModel> {
 
-    public CountryAdapter(@NonNull Context context, List<CountryModel> list) {
+    public interface  CountrAdapterListener{
+        void onCountryClick(CountryModel countryModel);
+    }
+
+    private final CountrAdapterListener listener;
+    public CountryAdapter(@NonNull Context context, List<CountryModel> list, CountrAdapterListener  listener) {
         super(context, 0, list);
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,6 +47,10 @@ public class CountryAdapter extends ArrayAdapter<CountryModel> {
         ImageView countryFlag =  view.findViewById(R.id.country_flag);
         countryName.setText(countryModel.getName());
         Glide.with(view).load(countryModel.getFlagUrl()).into(countryFlag);
+
+        view.setOnClickListener(view1 -> {
+            listener.onCountryClick(countryModel);
+        });
 
         return  view;
 

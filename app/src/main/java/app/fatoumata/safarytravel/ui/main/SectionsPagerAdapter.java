@@ -17,7 +17,7 @@ import app.fatoumata.safarytravel.R;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2};
+    private static final int[] TAB_TITLES = new int[]{R.string.tab_country_info, R.string.tab_all_photos, R.string.tab_my_photos};
     private final Context mContext;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
@@ -27,9 +27,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment.
-        return PlaceholderFragment.newInstance(position + 1);
+
+        if(position == 0)  return  new PlaceholderFragment();
+        if(position == 1)  return  new PlaceholderFragmentAllPhotos();
+        if(position == 2)  return  new PlaceholderFragmentMyPhotos();
+
+        return null;
     }
 
     @Nullable
@@ -41,6 +44,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 2 total pages.
-        return 2;
+        return TAB_TITLES.length;
     }
 }
