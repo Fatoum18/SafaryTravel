@@ -15,13 +15,14 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.fatoumata.safarytravel.R;
 import app.fatoumata.safarytravel.models.CountryModel;
 
 public class CountryAdapter extends ArrayAdapter<CountryModel> {
 
-    public CountryAdapter(@NonNull Context context, ArrayList<CountryModel> list) {
+    public CountryAdapter(@NonNull Context context, List<CountryModel> list) {
         super(context, 0, list);
     }
 

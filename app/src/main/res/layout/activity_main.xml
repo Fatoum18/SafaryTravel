@@ -17,11 +17,13 @@
         tools:context=".MainActivity">
 
         <TextView
-            android:id="@+id/user_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:text="Hello World!"/>
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:padding="14dp"
+            android:textAlignment="center"
+            android:text="@string/home_title"/>
 
         <GridView
             android:id="@+id/gridCountry"

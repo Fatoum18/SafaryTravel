@@ -21,9 +21,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.fatoumata.safarytravel.adapters.CountryAdapter;
 import app.fatoumata.safarytravel.models.CountryModel;
+import app.fatoumata.safarytravel.service.Converter;
+import app.fatoumata.safarytravel.service.CountryService;
+import app.fatoumata.safarytravel.service.dto.CountryOfRegionDto;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         auth = FirebaseAuth.getInstance();
-        textView = findViewById(R.id.user_details);
         countryGridView = findViewById(R.id.gridCountry);
         user = auth.getCurrentUser();
         if(user == null)
@@ -49,27 +55,31 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-        else
-        {
-            textView.setText(user.getEmail());
-
-        }
 
 
-        ArrayList<CountryModel> countryModels = new ArrayList<>();
-        countryModels.add(new CountryModel("1","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("2","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("3","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("4","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("5","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("6","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("7","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("7","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("7","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("7","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        countryModels.add(new CountryModel("7","Cameroon","https://mainfacts.com/media/images/coats_of_arms/cy.png"));
-        CountryAdapter countryAdapter =  new CountryAdapter(this,countryModels);
-        countryGridView.setAdapter(countryAdapter);
+
+        CountryService.api.getCountryOfRegion("europe").enqueue(new Callback<List<CountryOfRegionDto>>() {
+            @Override
+            public void onResponse(Call<List<CountryOfRegionDto>> call, Response<List<CountryOfRegionDto>> response) {
+
+                if(response.body()!=null){
+                    List<CountryModel> list =    Converter.countryDtosToModels(response.body());
+                    CountryAdapter countryAdapter =  new CountryAdapter(MainActivity.this,list);
+                    countryGridView.setAdapter(countryAdapter);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<CountryOfRegionDto>> call, Throwable throwable) {
+
+            }
+        });
+
+
+
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

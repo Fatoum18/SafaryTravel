@@ -11,4 +11,8 @@
     <string name="separator">----------------- Or---------------------</string>
     <string name="menu_logout">Logout</string>
     <string name="m_profil">My profil</string>
+    <string name="home_title">Choose country were to go</string>
+    <string name="title_activity_country">CountryActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>
