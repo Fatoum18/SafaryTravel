@@ -11,4 +11,8 @@ public interface CountryApi {
 
     @GET("region/{region}")
     public Call<List<CountryOfRegionDto>> getCountryOfRegion(@Path("region") String region);
+
+    @GET("name/{name}")
+    public Call<List<CountryOfRegionDto>> getCountryByName(@Path("name") String name);
 }
+

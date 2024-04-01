@@ -1,4 +1,4 @@
-package app.fatoumata.safarytravel.ui.main;
+package app.fatoumata.safarytravel.ui.main.myphoto;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,27 +6,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import app.fatoumata.safarytravel.R;
-import app.fatoumata.safarytravel.databinding.FragmentCountryBinding;
+import app.fatoumata.safarytravel.databinding.FragmentCountryMyPhotosBinding;
+import app.fatoumata.safarytravel.ui.main.PageViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment {
+public class FragmentCountryMyPhotos extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private PageViewModel pageViewModel;
-    private FragmentCountryBinding binding;
+    private FragmentCountryMyPhotosBinding binding;
 
-    public static PlaceholderFragment newInstance(int index) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
+    public static FragmentCountryMyPhotos newInstance(int index) {
+        FragmentCountryMyPhotos fragment = new FragmentCountryMyPhotos();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
@@ -49,16 +47,16 @@ public class PlaceholderFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        binding = FragmentCountryBinding.inflate(inflater, container, false);
+        binding = FragmentCountryMyPhotosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.sectionLabel;
-        pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+//        pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
         return root;
     }
 

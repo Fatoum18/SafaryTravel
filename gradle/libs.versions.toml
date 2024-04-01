@@ -14,6 +14,8 @@ retrofit = "2.11.0"
 gson = "2.11.0"
 lifecycleLivedataKtx = "2.6.1"
 lifecycleViewmodelKtx = "2.6.1"
+playServicesMaps = "18.2.0"
+osm = "6.1.14"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,6 +32,8 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+osm = { group = "org.osmdroid",  name="osmdroid-android" , version.ref ="osm"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

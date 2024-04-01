@@ -9,6 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import app.fatoumata.safarytravel.R;
+import app.fatoumata.safarytravel.ui.main.allphotos.FragmentCountryAllPhotos;
+import app.fatoumata.safarytravel.ui.main.info.FragmentCountryInfo;
+import app.fatoumata.safarytravel.ui.main.myphoto.FragmentCountryMyPhotos;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -19,18 +22,20 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.tab_country_info, R.string.tab_all_photos, R.string.tab_my_photos};
     private final Context mContext;
+    private final String countryName;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, String countryName) {
         super(fm);
         mContext = context;
+        this.countryName = countryName;
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0)  return  new PlaceholderFragment();
-        if(position == 1)  return  new PlaceholderFragmentAllPhotos();
-        if(position == 2)  return  new PlaceholderFragmentMyPhotos();
+        if(position == 0)  return   FragmentCountryInfo.newInstance(countryName);
+        if(position == 1)  return  new FragmentCountryAllPhotos();
+        if(position == 2)  return  new FragmentCountryMyPhotos();
 
         return null;
     }

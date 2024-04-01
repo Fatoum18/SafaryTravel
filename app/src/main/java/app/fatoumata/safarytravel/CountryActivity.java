@@ -39,25 +39,28 @@ public class CountryActivity extends AppCompatActivity {
         TextView title =  findViewById(R.id.title);
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null && bundle.containsKey(COUNTRY_NAME)){
-            title.setText(bundle.getString(COUNTRY_NAME));
+            final  String countryName = bundle.getString(COUNTRY_NAME);
+            title.setText(countryName);
+
+            SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),countryName);
+            ViewPager viewPager = binding.viewPager;
+            viewPager.setAdapter(sectionsPagerAdapter);
+            TabLayout tabs = binding.tabs;
+            tabs.setupWithViewPager(viewPager);
+            FloatingActionButton fab = binding.fab;
+
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null)
+                            .setAnchorView(R.id.fab).show();
+                }
+            });
         }
 
 
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = binding.fab;
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
-        });
     }
 
     public static void startActivity(AppCompatActivity compatActivity, CountryModel countryModel){

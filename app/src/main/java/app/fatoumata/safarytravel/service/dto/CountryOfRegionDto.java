@@ -2,17 +2,18 @@ package app.fatoumata.safarytravel.service.dto;
 
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CountryOfRegionDto{
 
     public Name name;
     public boolean independent;
-    public Currencies currencies;
+    public Map<String, Currency> currencies;
     public Idd idd;
     public ArrayList<String> capital;
     public String region;
     public String subregion;
-    public Languages languages;
+    public Map<String, String> languages;
     public ArrayList<Double> latlng;
     public double area;
     public Maps maps;
@@ -29,15 +30,12 @@ public class CountryOfRegionDto{
         public String side;
     }
 
-    public class Currencies{
+    public class Currency{
 
-        public EUR eUR;
-    }
-
-    public class EUR{
         public String name;
         public String symbol;
     }
+
 
     public class Flags{
         public String png;
