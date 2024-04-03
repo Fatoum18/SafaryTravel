@@ -16,4 +16,9 @@
     <string name="tab_country_info">Info</string>
     <string name="tab_all_photos">All Photos</string>
     <string name="tab_my_photos">My photos</string>
+    <string name="official_languages">OFFICIAL LANGUAGES :</string>
+    <string name="money">MONEY :</string>
+    <string name="population">POPULATION :</string>
+    <string name="capital">CAPITAL :</string>
+    <string name="official_name">OFFICIAL NAME :</string>
 </resources>
