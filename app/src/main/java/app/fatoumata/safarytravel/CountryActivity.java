@@ -5,18 +5,23 @@ import static com.google.gson.internal.$Gson$Types.arrayOf;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +45,12 @@ public class CountryActivity extends AppCompatActivity {
 
     private ActivityCountryBinding binding;
 
+    private static final  int CAMERA_REQUEST_CODE = 1;
+
+    private ActivityResultLauncher<Intent> launcher;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +58,23 @@ public class CountryActivity extends AppCompatActivity {
         binding = ActivityCountryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Configuration.getInstance().load(getApplication(), PreferenceManager.getDefaultSharedPreferences(getApplication()));
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        Log.d("URI", "onCreate: ");
+                        Intent data = result.getData();
+                        if(data != null){
+                            Log.d("URI", "onCreate1: ");
+                            Uri uri = data.getData();
+                            if(uri!=null)
+                            Log.d("URI", "onCreate: "+ uri.toString());
+                        }
 
-//        requestPermissionsIfNecessary(arrayOf(
-//                // if you need to show the current location, uncomment the line below
-//                // Manifest.permission.ACCESS_FINE_LOCATION,
-//                // WRITE_EXTERNAL_STORAGE is required in order to show the map
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//        ));
+                    }
+                }
+        );
+
 
         TextView title =  findViewById(R.id.title);
         Bundle bundle = getIntent().getExtras();
@@ -68,13 +89,11 @@ public class CountryActivity extends AppCompatActivity {
             tabs.setupWithViewPager(viewPager);
             FloatingActionButton fab = binding.fab;
 
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .setAnchorView(R.id.fab).show();
-                }
+            fab.setOnClickListener(view -> {
+                 Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                 if(intent.resolveActivity(getPackageManager()) !=null){
+                     launcher.launch(intent);
+                 }
             });
         }
 
