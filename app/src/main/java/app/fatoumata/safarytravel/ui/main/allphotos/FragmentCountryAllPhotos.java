@@ -4,19 +4,24 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import app.fatoumata.safarytravel.MainActivity;
+import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentCountryAllPhotosBinding;
+import app.fatoumata.safarytravel.models.PhotoModel;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentCountryAllPhotos extends Fragment {
+public class FragmentCountryAllPhotos extends Fragment  implements ChallengePhotoAdapter.Listener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -49,14 +54,18 @@ public class FragmentCountryAllPhotos extends Fragment {
 
         binding = FragmentCountryAllPhotosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        ;
 
-        final TextView textView = binding.sectionLabel;
-//        pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+        List<PhotoModel> list =    new ArrayList<>();
+        list.add(new PhotoModel("","https://loremflickr.com/640/480/animals"));
+        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/animals"));
+        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/cats"));
+        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/city"));
+        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/nature"));
+        ChallengePhotoAdapter challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this);
+        binding.gridPhotoChallenge.setAdapter(challengePhotoAdapter);
+
+
         return root;
     }
 
@@ -64,5 +73,10 @@ public class FragmentCountryAllPhotos extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onCountryClick(PhotoModel countryModel) {
+
     }
 }

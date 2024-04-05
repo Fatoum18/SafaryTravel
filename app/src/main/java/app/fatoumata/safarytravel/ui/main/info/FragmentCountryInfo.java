@@ -12,12 +12,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.util.List;
 
 import app.fatoumata.safarytravel.databinding.FragmentCountryBinding;
 import app.fatoumata.safarytravel.service.CountryService;
 import app.fatoumata.safarytravel.service.dto.CountryOfRegionDto;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
+import app.fatoumata.safarytravel.ui.main.info.component.CountryGeographyView;
 import app.fatoumata.safarytravel.ui.main.info.component.CountryInfoView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,6 +65,7 @@ public class FragmentCountryInfo extends Fragment {
         View root = binding.getRoot();
 
         final CountryInfoView countryInfoView =  binding.countryInfoView;
+        final CountryGeographyView geographyView =  binding.geographyView;
 
         CountryService.api.getCountryByName(countryName).enqueue(new Callback<List<CountryOfRegionDto>>() {
             @Override
@@ -76,6 +80,8 @@ public class FragmentCountryInfo extends Fragment {
                     countryInfoView.setMoney(String.valueOf(countryOfRegionDto.currencies.keySet()));
                     Glide.with(root).load(countryOfRegionDto.flags.png).into(countryInfoView.getFlagView());
                     Log.i("countryOfRegionDto", countryOfRegionDto.toString());
+                    geographyView.setupMap(countryOfRegionDto.latlng);
+                    //geographyView.setupMap(new GeoPoint(countryOfRegionDto.maps.openStreetMaps.));
                 }
             }
 
@@ -84,6 +90,8 @@ public class FragmentCountryInfo extends Fragment {
 
             }
         });
+
+
 
 //        final TextView textView = binding.sectionLabel;
 //        pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
