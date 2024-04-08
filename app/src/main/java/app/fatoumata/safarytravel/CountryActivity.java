@@ -1,40 +1,49 @@
 package app.fatoumata.safarytravel;
 
-import static com.google.gson.internal.$Gson$Types.arrayOf;
-
-import android.content.Context;
+import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 
 import org.osmdroid.config.Configuration;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
+import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
 import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
-import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
 
 
 
@@ -48,7 +57,9 @@ public class CountryActivity extends AppCompatActivity {
     private static final  int CAMERA_REQUEST_CODE = 1;
 
     private ActivityResultLauncher<Intent> launcher;
+    Uri  imageUri;
 
+    private  String countryName;
 
 
     @Override
@@ -62,14 +73,8 @@ public class CountryActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Log.d("URI", "onCreate: ");
-                        Intent data = result.getData();
-                        if(data != null){
-                            Log.d("URI", "onCreate1: ");
-                            Uri uri = data.getData();
-                            if(uri!=null)
-                            Log.d("URI", "onCreate: "+ uri.toString());
-                        }
+
+                        uploadImageToFirebase();
 
                     }
                 }
@@ -79,7 +84,7 @@ public class CountryActivity extends AppCompatActivity {
         TextView title =  findViewById(R.id.title);
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null && bundle.containsKey(COUNTRY_NAME)){
-            final  String countryName = bundle.getString(COUNTRY_NAME);
+            countryName = bundle.getString(COUNTRY_NAME);
             title.setText(countryName);
 
             SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),countryName);
@@ -89,12 +94,68 @@ public class CountryActivity extends AppCompatActivity {
             tabs.setupWithViewPager(viewPager);
             FloatingActionButton fab = binding.fab;
 
-            fab.setOnClickListener(view -> {
-                 Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                 if(intent.resolveActivity(getPackageManager()) !=null){
-                     launcher.launch(intent);
-                 }
+            fab.setOnClickListener(view -> openCamera());
+        }
+
+    }
+
+    private void openCamera(){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE,"New picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION,"Image from camera");
+        imageUri =  getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        if(intent.resolveActivity(getPackageManager()) !=null){
+            launcher.launch(intent);
+        }
+    }
+
+    private void uploadImageToFirebase()  {
+        // Create a storage reference from our app
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        StorageReference countryImagesRef = storageRef.child("images/"+countryName+"/"+imageUri.getLastPathSegment()+".jpg");
+
+        try{
+
+            UploadTask uploadTask = countryImagesRef.putFile(imageUri);
+
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d("UPLOAD_IMAGE", "onFailure: "+exception.getMessage());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    countryImagesRef.getDownloadUrl().addOnSuccessListener(uri->{
+
+                        createMedia(uri.toString());
+
+                    });
+                }
             });
+        }catch(Exception e){
+
+        }
+
+    }
+
+
+    private void createMedia(String url){
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+        if(user!=null){
+
+            Map<String, Object> challenge =  new HashMap<>();
+            challenge.put("url",url);
+            challenge.put("userId",user.getUid());
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection(countryName).add(challenge);
+
         }
 
 
@@ -106,23 +167,6 @@ public class CountryActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         permissionsToRequest.addAll(Arrays.asList(permissions).subList(0, grantResults.length));
-        if (!permissionsToRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
-    }
-
-    private void requestPermissionsIfNecessary(String[] permissions) {
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(this, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-                permissionsToRequest.add(permission);
-            }
-        }
         if (!permissionsToRequest.isEmpty()) {
             ActivityCompat.requestPermissions(
                     this,
