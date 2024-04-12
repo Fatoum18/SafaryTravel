@@ -14,8 +14,10 @@
     <string name="home_title">Choose country were to go</string>
     <string name="title_activity_country">CountryActivity</string>
     <string name="tab_country_info">Info</string>
-    <string name="tab_all_photos">All Photos</string>
+    <string name="tab_all_photos">Photos</string>
     <string name="tab_my_photos">My photos</string>
+    <string name="tab_challenges">Challenges</string>
+    <string name="tab_safary">Safary</string>
     <string name="official_languages">OFFICIAL LANGUAGES :</string>
     <string name="money">MONEY :</string>
     <string name="population">POPULATION :</string>

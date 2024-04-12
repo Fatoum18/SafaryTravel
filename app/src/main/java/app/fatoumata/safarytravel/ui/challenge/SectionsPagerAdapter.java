@@ -1,4 +1,4 @@
-package app.fatoumata.safarytravel.ui.main;
+package app.fatoumata.safarytravel.ui.challenge;
 
 import android.content.Context;
 
@@ -9,9 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import app.fatoumata.safarytravel.R;
-import app.fatoumata.safarytravel.ui.main.safary.FragmentCountrySafaryPhoto;
-import app.fatoumata.safarytravel.ui.main.info.FragmentCountryInfo;
-import app.fatoumata.safarytravel.ui.main.challenge.FragmentCountryChallenge;
+import app.fatoumata.safarytravel.ui.challenge.allphotos.FragmentChallengePhotos;
+
+import app.fatoumata.safarytravel.ui.challenge.myphoto.FragmentChallengeMyPhotos;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -20,7 +20,7 @@ import app.fatoumata.safarytravel.ui.main.challenge.FragmentCountryChallenge;
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{R.string.tab_country_info, R.string.tab_safary, R.string.tab_challenges};
+    private static final int[] TAB_TITLES = new int[]{  R.string.tab_all_photos, R.string.tab_my_photos};
     private final Context mContext;
     private final String countryName;
 
@@ -33,9 +33,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0)  return   FragmentCountryInfo.newInstance(countryName);
-        if(position == 1)  return  new FragmentCountrySafaryPhoto();
-        if(position == 2)  return  new FragmentCountryChallenge();
+        if(position == 0)  return   new FragmentChallengePhotos();
+
+        if(position == 1)  return  new FragmentChallengeMyPhotos();
 
         return null;
     }

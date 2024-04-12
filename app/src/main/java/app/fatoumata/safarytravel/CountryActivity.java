@@ -1,6 +1,7 @@
 package app.fatoumata.safarytravel;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,12 +9,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -38,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,15 +55,10 @@ import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
 
 public class CountryActivity extends AppCompatActivity {
 
-    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     static final  String COUNTRY_NAME = "COUNTRY_NAME";
 
     private ActivityCountryBinding binding;
 
-    private static final  int CAMERA_REQUEST_CODE = 1;
-
-    private ActivityResultLauncher<Intent> launcher;
-    Uri  imageUri;
 
     private  String countryName;
 
@@ -69,16 +70,6 @@ public class CountryActivity extends AppCompatActivity {
         binding = ActivityCountryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Configuration.getInstance().load(getApplication(), PreferenceManager.getDefaultSharedPreferences(getApplication()));
-        launcher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == RESULT_OK) {
-
-                        uploadImageToFirebase();
-
-                    }
-                }
-        );
 
 
         TextView title =  findViewById(R.id.title);
@@ -94,85 +85,48 @@ public class CountryActivity extends AppCompatActivity {
             tabs.setupWithViewPager(viewPager);
             FloatingActionButton fab = binding.fab;
 
-            fab.setOnClickListener(view -> openCamera());
-        }
-
-    }
-
-    private void openCamera(){
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,"New picture");
-        values.put(MediaStore.Images.Media.DESCRIPTION,"Image from camera");
-        imageUri =  getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        if(intent.resolveActivity(getPackageManager()) !=null){
-            launcher.launch(intent);
-        }
-    }
-
-    private void uploadImageToFirebase()  {
-        // Create a storage reference from our app
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        StorageReference countryImagesRef = storageRef.child("images/"+countryName+"/"+imageUri.getLastPathSegment()+".jpg");
-
-        try{
-
-            UploadTask uploadTask = countryImagesRef.putFile(imageUri);
-
-            uploadTask.addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle unsuccessful uploads
-                    Log.d("UPLOAD_IMAGE", "onFailure: "+exception.getMessage());
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    countryImagesRef.getDownloadUrl().addOnSuccessListener(uri->{
-
-                        createMedia(uri.toString());
-
-                    });
-                }
-            });
-        }catch(Exception e){
-
+            fab.setOnClickListener(view ->  createChallengeDialog());
         }
 
     }
 
 
-    private void createMedia(String url){
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-        if(user!=null){
-
-            Map<String, Object> challenge =  new HashMap<>();
-            challenge.put("url",url);
-            challenge.put("userId",user.getUid());
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection(countryName).add(challenge);
-
-        }
+    private  void createChallengeDialog(){
 
 
+        EditText editText = new EditText(this);
+        editText.setHint("Challenge name");
+        AlertDialog.Builder builder =  new AlertDialog.Builder(this);
+        builder.setTitle("Challenge")
+                .setMessage("Create challenge in order to allow people to participate")
+                .setView(editText)
+                .setPositiveButton("Create", (dialogInterface, i) -> {
 
+                    String name =  editText.getText().toString();
+                    if(!TextUtils.isEmpty(name)){
+                        createChallenge(name);
+                    }else{
+                        Toast.makeText(this,"Challenge name must not be empty",Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                })
+                .setNegativeButton("Cancel",(dialogInterface, i) -> {
+
+                }).show();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        ArrayList<String> permissionsToRequest = new ArrayList<>();
-        permissionsToRequest.addAll(Arrays.asList(permissions).subList(0, grantResults.length));
-        if (!permissionsToRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toArray(new String[0]),
-                    REQUEST_PERMISSIONS_REQUEST_CODE);
-        }
+    private  void createChallenge(String challengeName){
+
+        Map<String, Object> challenge =  new HashMap<>();
+        challenge.put("name",challengeName);
+        challenge.put("createAt", new Date());
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection(countryName)
+                .document()
+                .collection("challenges")
+                .add(challenge);
     }
 
 
@@ -182,7 +136,6 @@ public class CountryActivity extends AppCompatActivity {
         bundle.putString(COUNTRY_NAME, countryModel.getName());
         intent.putExtras(bundle);
         compatActivity.startActivity(intent);
-
 
     }
 }

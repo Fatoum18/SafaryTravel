@@ -1,4 +1,4 @@
-package app.fatoumata.safarytravel.ui.main.myphoto;
+package app.fatoumata.safarytravel.ui.main.challenge;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,21 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import app.fatoumata.safarytravel.databinding.FragmentCountryMyPhotosBinding;
+import app.fatoumata.safarytravel.databinding.FragmentCountryChallengeBinding;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentCountryMyPhotos extends Fragment {
+public class FragmentCountryChallenge extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private PageViewModel pageViewModel;
-    private FragmentCountryMyPhotosBinding binding;
+    private FragmentCountryChallengeBinding binding;
 
-    public static FragmentCountryMyPhotos newInstance(int index) {
-        FragmentCountryMyPhotos fragment = new FragmentCountryMyPhotos();
+    public static FragmentCountryChallenge newInstance(int index) {
+        FragmentCountryChallenge fragment = new FragmentCountryChallenge();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
@@ -47,7 +47,7 @@ public class FragmentCountryMyPhotos extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        binding = FragmentCountryMyPhotosBinding.inflate(inflater, container, false);
+        binding = FragmentCountryChallengeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         final TextView textView = binding.sectionLabel;

@@ -1,4 +1,4 @@
-package app.fatoumata.safarytravel.ui.main.allphotos;
+package app.fatoumata.safarytravel.ui.challenge.allphotos;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,24 +12,23 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.fatoumata.safarytravel.MainActivity;
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
-import app.fatoumata.safarytravel.databinding.FragmentCountryAllPhotosBinding;
+import app.fatoumata.safarytravel.databinding.FragmentChallengePhotosBinding;
 import app.fatoumata.safarytravel.models.PhotoModel;
-import app.fatoumata.safarytravel.ui.main.PageViewModel;
+import app.fatoumata.safarytravel.ui.challenge.PageViewModel;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentCountryAllPhotos extends Fragment  implements ChallengePhotoAdapter.Listener {
+public class FragmentChallengePhotos extends Fragment  implements ChallengePhotoAdapter.Listener {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     private PageViewModel pageViewModel;
-    private FragmentCountryAllPhotosBinding binding;
+    private FragmentChallengePhotosBinding binding;
 
-    public static FragmentCountryAllPhotos newInstance(int index) {
-        FragmentCountryAllPhotos fragment = new FragmentCountryAllPhotos();
+    public static FragmentChallengePhotos newInstance(int index) {
+        FragmentChallengePhotos fragment = new FragmentChallengePhotos();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
         fragment.setArguments(bundle);
@@ -52,7 +51,7 @@ public class FragmentCountryAllPhotos extends Fragment  implements ChallengePhot
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        binding = FragmentCountryAllPhotosBinding.inflate(inflater, container, false);
+        binding = FragmentChallengePhotosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         ;
 
