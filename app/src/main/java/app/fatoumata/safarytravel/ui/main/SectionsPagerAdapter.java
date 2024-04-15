@@ -19,6 +19,7 @@ import app.fatoumata.safarytravel.ui.main.challenge.FragmentCountryChallenge;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    public static final String COUNTRY_NAME_KEY = "COUNTRY_NAME";
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.tab_country_info, R.string.tab_safary, R.string.tab_challenges};
     private final Context mContext;
@@ -35,7 +36,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         if(position == 0)  return   FragmentCountryInfo.newInstance(countryName);
         if(position == 1)  return  new FragmentCountrySafaryPhoto();
-        if(position == 2)  return  new FragmentCountryChallenge();
+        if(position == 2)  return FragmentCountryChallenge.newInstance(countryName);
 
         return null;
     }

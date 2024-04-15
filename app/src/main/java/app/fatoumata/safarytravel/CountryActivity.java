@@ -50,7 +50,7 @@ import java.util.Map;
 import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
 import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
-
+import app.fatoumata.safarytravel.utils.DBUtils;
 
 
 public class CountryActivity extends AppCompatActivity {
@@ -123,9 +123,9 @@ public class CountryActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(countryName)
-                .document()
-                .collection("challenges")
+        db.collection(DBUtils.Collection.COUNTRIES)
+                .document(countryName)
+                .collection(DBUtils.Collection.CHALLENGES)
                 .add(challenge);
     }
 

@@ -53,7 +53,7 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
 
         binding = FragmentCountrySafaryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        ;
+
 
         List<PhotoModel> list =    new ArrayList<>();
         list.add(new PhotoModel("","https://loremflickr.com/640/480/animals"));

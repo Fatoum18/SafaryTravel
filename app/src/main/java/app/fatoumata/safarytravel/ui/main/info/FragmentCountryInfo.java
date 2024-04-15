@@ -20,6 +20,7 @@ import app.fatoumata.safarytravel.databinding.FragmentCountryBinding;
 import app.fatoumata.safarytravel.service.CountryService;
 import app.fatoumata.safarytravel.service.dto.CountryOfRegionDto;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
+import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
 import app.fatoumata.safarytravel.ui.main.info.component.CountryGeographyView;
 import app.fatoumata.safarytravel.ui.main.info.component.CountryInfoView;
 import retrofit2.Call;
@@ -31,7 +32,6 @@ import retrofit2.Response;
  */
 public class FragmentCountryInfo extends Fragment {
 
-    private static final String COUNTRY_NAME = "COUNTRY_NAME";
 
     private PageViewModel pageViewModel;
     private FragmentCountryBinding binding;
@@ -40,7 +40,7 @@ public class FragmentCountryInfo extends Fragment {
     public static FragmentCountryInfo newInstance(String name) {
         FragmentCountryInfo fragment = new FragmentCountryInfo();
         Bundle bundle = new Bundle();
-        bundle.putString(COUNTRY_NAME, name);
+        bundle.putString(SectionsPagerAdapter.COUNTRY_NAME_KEY, name);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -51,7 +51,7 @@ public class FragmentCountryInfo extends Fragment {
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
 
         if (getArguments() != null) {
-            countryName = getArguments().getString(COUNTRY_NAME);
+            countryName = getArguments().getString(SectionsPagerAdapter.COUNTRY_NAME_KEY);
         }
 //        pageViewModel.setIndex(index);
     }

@@ -39,13 +39,18 @@ import java.util.Map;
 import app.fatoumata.safarytravel.databinding.ActivityChallengeBinding;
 import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
 import app.fatoumata.safarytravel.models.CountryModel;
+import app.fatoumata.safarytravel.ui.challenge.SectionsChallengePagerAdapter;
 import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
+import app.fatoumata.safarytravel.ui.main.challenge.adapter.ChallengeAdapter;
+import app.fatoumata.safarytravel.utils.DBUtils;
 
 
 public class ChallengeActivity extends AppCompatActivity {
 
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     static final  String COUNTRY_NAME = "COUNTRY_NAME";
+    static final  String CHALLENGE_KEY = "CHALLENGE_KEY";
+    static final  String CHALLENGE_NAME = "CHALLENGE_NAME";
 
     private ActivityChallengeBinding binding;
 
@@ -54,6 +59,8 @@ public class ChallengeActivity extends AppCompatActivity {
     Uri  imageUri;
 
     private  String countryName;
+    private  String challengeKey ;
+
 
 
     @Override
@@ -73,13 +80,17 @@ public class ChallengeActivity extends AppCompatActivity {
         );
 
 
-        TextView title =  findViewById(R.id.title);
-        Bundle bundle = getIntent().getExtras();
-        if(bundle!=null && bundle.containsKey(COUNTRY_NAME)){
-            countryName = bundle.getString(COUNTRY_NAME);
-            title.setText(countryName);
 
-            SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),countryName);
+        Bundle bundle = getIntent().getExtras();
+        if(bundle!=null && bundle.containsKey(COUNTRY_NAME) && bundle.containsKey(CHALLENGE_NAME)&& bundle.containsKey(CHALLENGE_KEY)){
+            challengeKey = bundle.getString(CHALLENGE_KEY);
+            countryName = bundle.getString(COUNTRY_NAME);
+            binding.title.setText(countryName);
+
+            final String challengeName = bundle.getString(CHALLENGE_NAME);
+            binding.challengeName.setText(challengeName);
+
+            SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName);
             ViewPager viewPager = binding.viewPager;
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
@@ -138,17 +149,19 @@ public class ChallengeActivity extends AppCompatActivity {
 
     private void createMedia(String url){
 
-
+    if(challengeKey!=null){
         FirebaseUser user = getCurrentUser();
         if(user!=null){
 
-            Map<String, Object> challenge =  new HashMap<>();
-            challenge.put("url",url);
-            challenge.put("userId",user.getUid());
+            Map<String, Object> challengePhoto =  new HashMap<>();
+            challengePhoto.put("url",url);
+            challengePhoto.put("userId",user.getUid());
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection(countryName).add(challenge);
+            db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos").add(challengePhoto);
 
         }
+    }
+
 
 
 
@@ -168,10 +181,12 @@ public class ChallengeActivity extends AppCompatActivity {
     }
 
 
-    public static void startActivity(AppCompatActivity compatActivity, CountryModel countryModel){
+    public static void startActivity(AppCompatActivity compatActivity, String countryName, String challengeName,String challengeKey){
         Intent intent =  new Intent(compatActivity, ChallengeActivity.class);
         Bundle bundle =  new Bundle();
-        bundle.putString(COUNTRY_NAME, countryModel.getName());
+        bundle.putString(COUNTRY_NAME, countryName);
+        bundle.putString(CHALLENGE_KEY, challengeKey);
+        bundle.putString(CHALLENGE_NAME, challengeName);
         intent.putExtras(bundle);
         compatActivity.startActivity(intent);
 
