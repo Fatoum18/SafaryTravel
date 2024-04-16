@@ -19,23 +19,27 @@ import app.fatoumata.safarytravel.ui.challenge.myphoto.FragmentChallengeMyPhotos
  */
 public class SectionsChallengePagerAdapter extends FragmentPagerAdapter {
 
+    public static final String COUNTRY_NAME_KEY = "COUNTRY_NAME";
+    public static final String CHALLENGE_KEY = "CHALLENGE_KEY";
     @StringRes
     private static final int[] TAB_TITLES = new int[]{  R.string.tab_all_photos, R.string.tab_my_photos};
     private final Context mContext;
     private final String countryName;
+    private final String challengeKey;
 
-    public SectionsChallengePagerAdapter(Context context, FragmentManager fm, String countryName) {
+    public SectionsChallengePagerAdapter(Context context, FragmentManager fm, String countryName, String challengeKey) {
         super(fm);
         mContext = context;
         this.countryName = countryName;
+        this.challengeKey = challengeKey;
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        if(position == 0)  return   new FragmentChallengePhotos();
+        if(position == 0)  return FragmentChallengePhotos.newInstance(countryName,challengeKey);
 
-        if(position == 1)  return  new FragmentChallengeMyPhotos();
+        if(position == 1)  return FragmentChallengeMyPhotos.newInstance(countryName, challengeKey);
 
         return null;
     }

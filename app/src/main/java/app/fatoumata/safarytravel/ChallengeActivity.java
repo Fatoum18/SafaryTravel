@@ -2,6 +2,8 @@ package app.fatoumata.safarytravel;
 
 import static app.fatoumata.safarytravel.utils.DBUtils.getCurrentUser;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,10 +12,12 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -33,6 +37,7 @@ import org.osmdroid.config.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,7 +95,7 @@ public class ChallengeActivity extends AppCompatActivity {
             final String challengeName = bundle.getString(CHALLENGE_NAME);
             binding.challengeName.setText(challengeName);
 
-            SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName);
+            SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName,challengeKey);
             ViewPager viewPager = binding.viewPager;
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
@@ -110,9 +115,8 @@ public class ChallengeActivity extends AppCompatActivity {
 
         Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        if(intent.resolveActivity(getPackageManager()) !=null){
-            launcher.launch(intent);
-        }
+        launcher.launch(intent);
+
     }
 
     private void uploadImageToFirebase()  {
@@ -120,6 +124,12 @@ public class ChallengeActivity extends AppCompatActivity {
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
         StorageReference countryImagesRef = storageRef.child("images/"+countryName+"/"+imageUri.getLastPathSegment()+".jpg");
 
+        AlertDialog.Builder builder =  new AlertDialog.Builder(this);
+        builder.setView(R.layout.progress);
+        Dialog dialog =  builder.create();
+
+
+        dialog.show();
         try{
 
             UploadTask uploadTask = countryImagesRef.putFile(imageUri);
@@ -129,6 +139,8 @@ public class ChallengeActivity extends AppCompatActivity {
                 public void onFailure(@NonNull Exception exception) {
                     // Handle unsuccessful uploads
                     Log.d("UPLOAD_IMAGE", "onFailure: "+exception.getMessage());
+                    // Ajoute un toast lorsque upload echoue`
+                    dialog.dismiss();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -136,12 +148,13 @@ public class ChallengeActivity extends AppCompatActivity {
                     countryImagesRef.getDownloadUrl().addOnSuccessListener(uri->{
 
                         createMedia(uri.toString());
+                        dialog.dismiss();
 
                     });
                 }
             });
         }catch(Exception e){
-
+            dialog.dismiss();
         }
 
     }
@@ -156,9 +169,12 @@ public class ChallengeActivity extends AppCompatActivity {
             Map<String, Object> challengePhoto =  new HashMap<>();
             challengePhoto.put("url",url);
             challengePhoto.put("userId",user.getUid());
+            challengePhoto.put("createdAt",new Date());
+            challengePhoto.put("countLike",0);
+            challengePhoto.put("name",user.getDisplayName());
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos").add(challengePhoto);
-
+            // Ajoute un toast lorsque le media a ete cree`
         }
     }
 

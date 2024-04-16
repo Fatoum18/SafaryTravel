@@ -1,6 +1,7 @@
 package app.fatoumata.safarytravel.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +28,12 @@ public class ChallengePhotoAdapter extends ArrayAdapter<PhotoModel> {
     final Context context;
 
     private final Listener listener;
-    public ChallengePhotoAdapter(@NonNull Context context, List<PhotoModel> list, Listener listener) {
+    private final String currentUserId;
+    public ChallengePhotoAdapter(@NonNull Context context, List<PhotoModel> list, Listener listener, String currentUserId ) {
         super(context, 0, list);
         this.listener = listener;
         this.context = context;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
@@ -43,9 +46,14 @@ public class ChallengePhotoAdapter extends ArrayAdapter<PhotoModel> {
          PhotoModel photoModel = getItem(position);
 
          if(photoModel!=null){
+
+             boolean isMe = photoModel.getUserId() != null && photoModel.getUserId().equals(currentUserId);
              TextView countLikeView =  view.findViewById(R.id.countLike);
+             ImageView imageViewLike =  view.findViewById(R.id.buttonLike);
              ImageView photoView =  view.findViewById(R.id.photoUrl);
              countLikeView.setText(context.getString(R.string.count_like,photoModel.getCountLike()));
+
+             imageViewLike.setVisibility(isMe ? View.GONE :  View.VISIBLE);
              Glide.with(view).load(photoModel.getUrl()).into(photoView);
 
              view.setOnClickListener(view1 -> {

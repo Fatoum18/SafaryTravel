@@ -67,7 +67,6 @@ public class FragmentCountryChallenge extends BaseFragment implements ChallengeA
         View root = binding.getRoot();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES);
         collectionChallenges.get().addOnSuccessListener(queryDocumentSnapshots -> {
 

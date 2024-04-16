@@ -1,5 +1,7 @@
 package app.fatoumata.safarytravel.models;
 
+import java.util.Date;
+
 public class PhotoModel {
 
     private String id;
@@ -7,6 +9,9 @@ public class PhotoModel {
     private String url;
 
     private int countLike;
+    private Date createdAt;
+
+    private String userId;
 
     public PhotoModel() {
     }
@@ -20,6 +25,14 @@ public class PhotoModel {
         this.id = id;
         this.name = name;
         this.url = url;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -54,5 +67,11 @@ public class PhotoModel {
         this.countLike = countLike;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

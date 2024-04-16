@@ -61,7 +61,7 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
         list.add(new PhotoModel("","https://loremflickr.com/1234/2345/cats"));
         list.add(new PhotoModel("","https://loremflickr.com/1234/2345/city"));
         list.add(new PhotoModel("","https://loremflickr.com/1234/2345/nature"));
-        ChallengePhotoAdapter challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this);
+        ChallengePhotoAdapter challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this,null);
         binding.gridPhotoChallenge.setAdapter(challengePhotoAdapter);
 
 

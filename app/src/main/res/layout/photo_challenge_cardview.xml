@@ -37,9 +37,10 @@
             android:clickable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:id="@+id/buttonLike"
-
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:visibility="gone"
+            tools:visibility="visible"
             android:src="@drawable/baseline_thumb_up_24"
             android:focusable="true" />
         <Space
