@@ -140,6 +140,7 @@ public class ChallengeActivity extends AppCompatActivity {
                     // Handle unsuccessful uploads
                     Log.d("UPLOAD_IMAGE", "onFailure: "+exception.getMessage());
                     // Ajoute un toast lorsque upload echoue`
+                    Toast.makeText(ChallengeActivity.this, "Upload Image failed", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -175,6 +176,8 @@ public class ChallengeActivity extends AppCompatActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos").add(challengePhoto);
             // Ajoute un toast lorsque le media a ete cree`
+            Toast.makeText(ChallengeActivity.this, "Media created", Toast.LENGTH_SHORT).show();
+
         }
     }
 
