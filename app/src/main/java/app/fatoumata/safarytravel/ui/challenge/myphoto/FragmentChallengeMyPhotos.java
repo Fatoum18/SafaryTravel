@@ -98,7 +98,7 @@ public class FragmentChallengeMyPhotos extends BaseFragment  implements Challeng
         binding = null;
     }
     @Override
-    public void onCountryClick(PhotoModel countryModel) {
+    public void onThumbClick(PhotoModel countryModel) {
 
     }
 

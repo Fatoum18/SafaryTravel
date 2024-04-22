@@ -75,7 +75,7 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
     }
 
     @Override
-    public void onCountryClick(PhotoModel countryModel) {
+    public void onThumbClick(PhotoModel countryModel) {
 
     }
 }

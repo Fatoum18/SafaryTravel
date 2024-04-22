@@ -74,4 +74,8 @@ public class PhotoModel {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    public  void increment(int value){
+        this.countLike = countLike + value;
+    }
 }

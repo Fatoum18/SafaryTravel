@@ -1,7 +1,6 @@
 package app.fatoumata.safarytravel.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import app.fatoumata.safarytravel.models.PhotoModel;
 public class ChallengePhotoAdapter extends ArrayAdapter<PhotoModel> {
 
     public interface Listener {
-        void onCountryClick(PhotoModel countryModel);
+        void onThumbClick(PhotoModel countryModel);
     }
     final Context context;
 
@@ -56,8 +55,8 @@ public class ChallengePhotoAdapter extends ArrayAdapter<PhotoModel> {
              imageViewLike.setVisibility(isMe ? View.GONE :  View.VISIBLE);
              Glide.with(view).load(photoModel.getUrl()).into(photoView);
 
-             view.setOnClickListener(view1 -> {
-                 listener.onCountryClick(photoModel);
+             imageViewLike.setOnClickListener(view1 -> {
+                 listener.onThumbClick(photoModel);
              });
          }
 

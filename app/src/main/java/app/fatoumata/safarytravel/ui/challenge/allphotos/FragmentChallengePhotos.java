@@ -8,17 +8,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentChallengePhotosBinding;
@@ -36,6 +47,7 @@ import app.fatoumata.safarytravel.utils.DBUtils;
  */
 public class FragmentChallengePhotos extends BaseFragment implements ChallengePhotoAdapter.Listener {
 
+    ChallengePhotoAdapter challengePhotoAdapter;
     private FragmentChallengePhotosBinding binding;
 
     public static FragmentChallengePhotos newInstance(String countryName, String challengeKey) {
@@ -46,12 +58,14 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         fragment.setArguments(bundle);
         return fragment;
     }
-
+    FirebaseFirestore db ;
+    FirebaseUser user ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        db = FirebaseFirestore.getInstance();
+        user = getCurrentUser();
         if (getArguments() != null) {
             countryName = getArguments().getString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY);
             challengeKey = getArguments().getString(SectionsChallengePagerAdapter.CHALLENGE_KEY);
@@ -67,9 +81,24 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         binding = FragmentChallengePhotosBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        FirebaseUser user = getCurrentUser();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
+        collectionChallenges.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                fetchPhoto(collectionChallenges);
+
+            }
+        });
+        fetchPhoto(collectionChallenges);
+
+
+
+
+        return root;
+    }
+
+    private void fetchPhoto(CollectionReference collectionChallenges){
 
         collectionChallenges.orderBy("createdAt", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
 
@@ -84,12 +113,9 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
 
             }
 
-            ChallengePhotoAdapter challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this,user.getUid());
+            challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this,user.getUid());
             binding.gridPhotoChallenge.setAdapter(challengePhotoAdapter);
         });
-
-
-        return root;
     }
 
     @Override
@@ -99,7 +125,36 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
     }
 
     @Override
-    public void onCountryClick(PhotoModel countryModel) {
+    public void onThumbClick(PhotoModel photoModel) {
+
+        FirebaseUser user = getCurrentUser();
+        String userId =  user.getUid();
+
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
+
+        DocumentReference photoRef = collectionChallenges.document(photoModel.getId());
+        photoRef.collection("likes").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot snapshot = task.getResult();
+                //User has already liked the photo
+                if(snapshot.exists()){
+
+                    photoRef.update("countLike", FieldValue.increment(-1));
+                    photoRef.collection("likes").document(userId).delete();
+                    photoModel.increment(-1);
+                    challengePhotoAdapter.notifyDataSetChanged();
+                }else{
+                    photoRef.update("countLike", FieldValue.increment(1));
+                    Map<String, Object> likeDoc =  new HashMap<>();
+                    likeDoc.put("createdAt",new Date());
+                    photoRef.collection("likes").document(userId).set(likeDoc);
+                    photoModel.increment(1);
+                    challengePhotoAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+
 
     }
 }
