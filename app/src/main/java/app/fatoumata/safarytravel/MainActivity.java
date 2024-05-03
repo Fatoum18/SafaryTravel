@@ -11,6 +11,7 @@ import android.widget.GridView;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         });
 
         binding.toolbar.inflateMenu(R.menu.main_activity_menu);
+        binding.toolbar.setOnMenuItemClickListener(this::onOptionsItemSelected);
 
     }
 
