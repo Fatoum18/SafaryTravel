@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
 import app.fatoumata.safarytravel.models.CountryModel;
@@ -71,12 +73,12 @@ public class CountryActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         Configuration.getInstance().load(getApplication(), PreferenceManager.getDefaultSharedPreferences(getApplication()));
 
+        binding.toolbar.setNavigationOnClickListener(view -> finish());
 
-        TextView title =  findViewById(R.id.title);
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null && bundle.containsKey(COUNTRY_NAME)){
             countryName = bundle.getString(COUNTRY_NAME);
-            title.setText(countryName);
+            binding.toolbar.setTitle(countryName);
 
             SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(),countryName);
             ViewPager viewPager = binding.viewPager;

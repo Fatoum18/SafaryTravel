@@ -74,6 +74,7 @@ public class ChallengeActivity extends AppCompatActivity {
 
         binding = ActivityChallengeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        binding.toolbar.setNavigationOnClickListener(view -> finish());
         Configuration.getInstance().load(getApplication(), PreferenceManager.getDefaultSharedPreferences(getApplication()));
         launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -85,15 +86,14 @@ public class ChallengeActivity extends AppCompatActivity {
         );
 
 
-
         Bundle bundle = getIntent().getExtras();
         if(bundle!=null && bundle.containsKey(COUNTRY_NAME) && bundle.containsKey(CHALLENGE_NAME)&& bundle.containsKey(CHALLENGE_KEY)){
             challengeKey = bundle.getString(CHALLENGE_KEY);
             countryName = bundle.getString(COUNTRY_NAME);
-            binding.title.setText(countryName);
+            binding.toolbar.setTitle(countryName);
 
             final String challengeName = bundle.getString(CHALLENGE_NAME);
-            binding.challengeName.setText(challengeName);
+            binding.toolbar.setSubtitle(challengeName);
 
             SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName,challengeKey);
             ViewPager viewPager = binding.viewPager;

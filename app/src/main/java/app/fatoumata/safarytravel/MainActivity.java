@@ -2,13 +2,11 @@ package app.fatoumata.safarytravel;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -17,16 +15,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import app.fatoumata.safarytravel.adapters.CountryAdapter;
 import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.service.Converter;
 import app.fatoumata.safarytravel.service.CountryService;
+import app.fatoumata.safarytravel.service.FMService;
 import app.fatoumata.safarytravel.service.dto.CountryOfRegionDto;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +36,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements  CountryAdapter.CountrAdapterListener{
 
     FirebaseAuth auth;
-    TextView textView;
+
     FirebaseUser user;
 
     GridView countryGridView;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         auth = FirebaseAuth.getInstance();
@@ -54,9 +55,27 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
+            return;
         }
 
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
 
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        FMService.registerDevice(token);
+
+                        Log.i("FCM", token);
+                    }
+                });
 
         CountryService.api.getCountryOfRegion("europe").enqueue(new Callback<List<CountryOfRegionDto>>() {
             @Override
@@ -77,16 +96,9 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         });
 
 
-
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
+
+
 
 
     private void logout(){

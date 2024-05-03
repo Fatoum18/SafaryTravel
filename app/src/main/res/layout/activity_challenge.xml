@@ -11,30 +11,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:minHeight="?actionBarSize"
-
         android:padding="5dp"
         android:theme="@style/AppBarOverlay">
-
-        <TextView
-            android:id="@+id/challengeName"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/app_name"
-            android:textColor="@color/black"
-            android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textStyle="italic"
-            android:text="@string/app_name"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            android:layout_marginBottom="5dp"
-            />
+            android:layout_gravity="center_horizontal"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/black"
+            app:subtitle="@string/app_name"
+            app:subtitleTextColor="@color/black"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:layout_scrollFlags="scroll|enterAlways" />
 
 
         <com.google.android.material.tabs.TabLayout
@@ -47,6 +36,9 @@
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

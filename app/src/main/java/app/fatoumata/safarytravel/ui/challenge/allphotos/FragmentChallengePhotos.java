@@ -3,14 +3,13 @@ package app.fatoumata.safarytravel.ui.challenge.allphotos;
 import static app.fatoumata.safarytravel.utils.DBUtils.getCurrentUser;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,12 +34,11 @@ import java.util.Map;
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentChallengePhotosBinding;
 import app.fatoumata.safarytravel.models.PhotoModel;
+import app.fatoumata.safarytravel.models.fcm.RequestNotification;
+import app.fatoumata.safarytravel.models.fcm.SendNotificationModel;
+import app.fatoumata.safarytravel.service.FMService;
 import app.fatoumata.safarytravel.ui.challenge.BaseFragment;
-import app.fatoumata.safarytravel.ui.challenge.PageViewModel;
 import app.fatoumata.safarytravel.ui.challenge.SectionsChallengePagerAdapter;
-import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
-import app.fatoumata.safarytravel.ui.main.challenge.FragmentCountryChallenge;
-import app.fatoumata.safarytravel.ui.main.challenge.adapter.ChallengeAdapter;
 import app.fatoumata.safarytravel.utils.DBUtils;
 
 /**
@@ -61,11 +60,16 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
     FirebaseFirestore db ;
     FirebaseUser user ;
 
+    FMService fmService = new FMService();
+
+    private final FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
         user = getCurrentUser();
+
         if (getArguments() != null) {
             countryName = getArguments().getString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY);
             challengeKey = getArguments().getString(SectionsChallengePagerAdapter.CHALLENGE_KEY);
@@ -130,6 +134,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         FirebaseUser user = getCurrentUser();
         String userId =  user.getUid();
 
+
         CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
 
         DocumentReference photoRef = collectionChallenges.document(photoModel.getId());
@@ -150,11 +155,30 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
                     likeDoc.put("createdAt",new Date());
                     photoRef.collection("likes").document(userId).set(likeDoc);
                     photoModel.increment(1);
+
+                    sendNotification(photoModel.getUserId(),"");
+
                     challengePhotoAdapter.notifyDataSetChanged();
                 }
             }
         });
+    }
 
+    private void sendNotification(String targetUserId, String messageText){
+
+
+        fmService.fetcUserToken(targetUserId, token -> {
+
+            Log.d("FCM", "sendNotification: "+token);
+            SendNotificationModel sendNotificationModel = new SendNotificationModel("Someone like your photo", "Challenge: Maison");
+            RequestNotification requestNotificaton = new RequestNotification();
+            requestNotificaton.setNotification(sendNotificationModel);
+
+            requestNotificaton.setToken(token);
+
+            Log.d("FCM-", "sendNotification: "+requestNotificaton);
+            fmService.sendNotification(requestNotificaton);
+        });
 
     }
 }
