@@ -1,5 +1,7 @@
 package app.fatoumata.safarytravel;
 
+import static app.fatoumata.safarytravel.utils.DBUtils.getCurrentUser;
+
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -86,8 +88,14 @@ public class CountryActivity extends AppCompatActivity {
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
             FloatingActionButton fab = binding.fab;
+            FirebaseUser user = getCurrentUser();
+            if(user!=null){
+                if(Objects.equals(user.getEmail(), "admin@safarytravel.com")){
+                    fab.setVisibility(View.VISIBLE);
+                    fab.setOnClickListener(view ->  createChallengeDialog());
+                }
+            }
 
-            fab.setOnClickListener(view ->  createChallengeDialog());
         }
 
     }
