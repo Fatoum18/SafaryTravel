@@ -24,6 +24,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.List;
 
 import app.fatoumata.safarytravel.adapters.CountryAdapter;
+import app.fatoumata.safarytravel.databinding.ActivityMainBinding;
 import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.service.Converter;
 import app.fatoumata.safarytravel.service.CountryService;
@@ -40,12 +41,16 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
     FirebaseUser user;
 
     GridView countryGridView;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
 
         auth = FirebaseAuth.getInstance();
         countryGridView = findViewById(R.id.gridCountry);
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
             }
         });
 
+        binding.toolbar.inflateMenu(R.menu.main_activity_menu);
 
     }
 
@@ -107,13 +113,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         startActivity(intent);
         finish();
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater menuInflater =  getMenuInflater();
-        menuInflater.inflate(R.menu.main_activity_menu, menu);
-        return  true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
