@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import app.fatoumata.safarytravel.models.fcm.FCMBody;
 import app.fatoumata.safarytravel.models.fcm.RequestNotification;
 import app.fatoumata.safarytravel.service.api.FcmApi;
 import feign.AsyncClient;
@@ -46,41 +47,18 @@ public class FMService extends FirebaseMessagingService {
     FcmApi fcmApi =   AsyncFeign.builder().client(new OkHttpClient())
             .encoder(new GsonEncoder())
             .decoder(new GsonDecoder())
-//            .logger(new Slf4jLogger(RequestNotification.class))
             .logger(new Slf4jLogger())
             .logLevel(Logger.Level.FULL)
             .target(FcmApi.class, "https://fcm.googleapis.com/v1/projects/safarytravel/messages:send");
-//            .target(FcmApi.class, "http://192.168.2.100:3000/projects")
 
-            ;
+    public void sendNotification(RequestNotification requestNotification ){
 
-    public void sendNotification(RequestNotification requestNotification){
-
-
-
-
-            fcmApi.sendNotification(new FcmApi.FCMBody(requestNotification)).whenComplete(new BiConsumer<String, Throwable>() {
-                @Override
-                public void accept(String s, Throwable throwable) {
-                    Log.d(TAG, "FCM notification sent "+s);
-                    if(throwable!=null){
-                        throwable.printStackTrace();
-                    }
-
-                }
-            });
-
-
-
-
-
+             sendNoticationWithToken(requestNotification);
     }
 
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d("TAG", "Refreshed token: " + token);
-
-
 
     }
 
@@ -91,33 +69,34 @@ public class FMService extends FirebaseMessagingService {
 
         Map map = new HashMap();
         map.put("fcmToken", token);
-        userRef.set(map, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.i("FCM", "FCM Token added");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.i("FCM","FCM Token failed to add");
-            }
-        });
+        userRef.set(map, SetOptions.merge()).addOnSuccessListener(unused -> Log.i("FCM", "FCM Token added")).addOnFailureListener(e -> Log.i("FCM","FCM Token failed to add"));
     }
 
+
+    private  void sendNoticationWithToken (RequestNotification requestNotification){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        DocumentReference configRef = db.collection("Config").document("v1");
+        configRef.get().addOnSuccessListener(documentSnapshot -> {
+
+            String token = documentSnapshot.getString("fcmAccessToken");
+            if(token!=null){
+                fcmApi.sendNotification(new FCMBody(requestNotification),token).whenComplete((s, throwable) -> Log.d(TAG, "FCM notification sent "+s));
+            }
+        });
+
+    }
 
     public  void fetcUserToken (String userId, FecthToken listener){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference userRef = db.collection("users").document(userId);
-        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
 
-                String token = documentSnapshot.getString("fcmToken");
-                if(token!=null){
-                    if(listener !=null){
-                        listener.onSuccess(token);
-                    }
+            String token = documentSnapshot.getString("fcmToken");
+            if(token!=null){
+                if(listener !=null){
+                    listener.onSuccess(token);
                 }
             }
         });
