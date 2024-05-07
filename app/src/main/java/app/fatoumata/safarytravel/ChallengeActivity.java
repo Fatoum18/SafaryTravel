@@ -174,7 +174,7 @@ public class ChallengeActivity extends AppCompatActivity {
             challengePhoto.put("countLike",0);
             challengePhoto.put("name",user.getDisplayName());
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos").add(challengePhoto);
+            db.collection(DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/"+DBUtils.Collection.COUNTRIES+"/"+countryName+"/photos").add(challengePhoto);
             // Ajoute un toast lorsque le media a ete cree`
             Toast.makeText(ChallengeActivity.this, "Media created", Toast.LENGTH_SHORT).show();
 

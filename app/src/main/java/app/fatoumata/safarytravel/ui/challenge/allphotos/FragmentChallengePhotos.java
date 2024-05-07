@@ -86,7 +86,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         View root = binding.getRoot();
 
 
-        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/"+DBUtils.Collection.COUNTRIES + "/" + countryName +"/photos");
         collectionChallenges.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

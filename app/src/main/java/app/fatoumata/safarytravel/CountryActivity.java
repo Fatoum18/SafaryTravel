@@ -95,7 +95,6 @@ public class CountryActivity extends AppCompatActivity {
                     fab.setOnClickListener(view ->  createChallengeDialog());
                 }
             }
-
         }
 
     }
@@ -138,6 +137,9 @@ public class CountryActivity extends AppCompatActivity {
                 .collection(DBUtils.Collection.CHALLENGES)
                 .add(challenge);
     }
+
+
+
 
 
     public static void startActivity(AppCompatActivity compatActivity, CountryModel countryModel){

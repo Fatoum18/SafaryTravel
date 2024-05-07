@@ -69,7 +69,7 @@ public class FragmentChallengeMyPhotos extends BaseFragment  implements Challeng
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser user = getCurrentUser();
-        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/"+DBUtils.Collection.COUNTRIES + "/" + countryName +"/photos");
 
         collectionChallenges.whereEqualTo("userId", user.getUid()).get().addOnSuccessListener(queryDocumentSnapshots -> {
 

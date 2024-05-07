@@ -10,18 +10,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import app.fatoumata.safarytravel.ChallengeActivity;
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentCountryChallengeBinding;
+import app.fatoumata.safarytravel.models.Challenge;
 import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.models.PhotoModel;
 import app.fatoumata.safarytravel.ui.main.BaseFragment;
@@ -34,7 +39,7 @@ import app.fatoumata.safarytravel.utils.DBUtils;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentCountryChallenge extends BaseFragment implements ChallengeAdapter.Listener {
+public class FragmentCountryChallenge extends BaseFragment{
 
 
     private PageViewModel pageViewModel;
@@ -66,24 +71,42 @@ public class FragmentCountryChallenge extends BaseFragment implements ChallengeA
         binding = FragmentCountryChallengeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        Calendar calendar = Calendar.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES);
-        collectionChallenges.get().addOnSuccessListener(queryDocumentSnapshots -> {
+        DocumentReference documentRef = db.document(DBUtils.Collection.CHALLENGES+"/"+calendar.get(Calendar.DAY_OF_MONTH));
 
-            List<ChallengeAdapter.ChallengeModel> challengeModels =  new ArrayList<>();
-            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
-            for(DocumentSnapshot snapshot  : list1){
-                ChallengeAdapter.ChallengeModel challengeModel = snapshot.toObject(ChallengeAdapter.ChallengeModel.class);
-                if(challengeModel!=null){
-                    challengeModel.setId(snapshot.getId());
-                    challengeModels.add(challengeModel);
-                }
 
-            }
+        documentRef.get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
 
-            ChallengeAdapter challengeAdapter =  new ChallengeAdapter(requireActivity(),challengeModels,this);
-            binding.gridChallenge.setAdapter(challengeAdapter);
-        });
+                            if (documentSnapshot.exists()) {
+                                // Document exists, cast it into a Challenge object
+                                Challenge challenge = documentSnapshot.toObject(Challenge.class);
+
+                                if(challenge!=null){
+                                    // Now you can use the Challenge object
+                                    String title = challenge.getTitle();
+                                    String description = challenge.getDescription();
+
+                                    binding.titleTextView.setText(title);
+                                    binding.descriptionTextView.setText(description);
+                                    binding.goToChallengeButton.setOnClickListener((e)->onChallengeClick(challenge));
+                                }
+
+                            }
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle errors
+                    }
+                });
+
 
 
         return root;
@@ -95,9 +118,8 @@ public class FragmentCountryChallenge extends BaseFragment implements ChallengeA
         binding = null;
     }
 
-    @Override
-    public void onChallengeClick(ChallengeAdapter.ChallengeModel challengeModel) {
+    public void onChallengeClick(Challenge challenge) {
 
-        ChallengeActivity.startActivity((AppCompatActivity) getActivity(),countryName,challengeModel.getName(),challengeModel.getId());
+        ChallengeActivity.startActivity((AppCompatActivity) getActivity(),countryName,challenge.getTitle(),String.valueOf(challenge.getDay()));
     }
 }
