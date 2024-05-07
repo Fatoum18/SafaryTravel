@@ -7,4 +7,12 @@ public class FCMBody {
     public FCMBody(RequestNotification message){
         this.message = message ;
     }
+
+    public RequestNotification getMessage() {
+        return message;
+    }
+
+    public void setMessage(RequestNotification message) {
+        this.message = message;
+    }
 }

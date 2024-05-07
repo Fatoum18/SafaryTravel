@@ -23,7 +23,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,11 +48,12 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
     ChallengePhotoAdapter challengePhotoAdapter;
     private FragmentChallengePhotosBinding binding;
 
-    public static FragmentChallengePhotos newInstance(String countryName, String challengeKey) {
+    public static FragmentChallengePhotos newInstance(String countryName, String challengeKey, String challengeName) {
         FragmentChallengePhotos fragment = new FragmentChallengePhotos();
         Bundle bundle = new Bundle();
         bundle.putString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY, countryName);
         bundle.putString(SectionsChallengePagerAdapter.CHALLENGE_KEY, challengeKey);
+        bundle.putString(SectionsChallengePagerAdapter.CHALLENGE_NAME, challengeName);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -61,8 +61,6 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
     FirebaseUser user ;
 
     FMService fmService = new FMService();
-
-    private final FirebaseMessaging messaging = FirebaseMessaging.getInstance();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,6 +71,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         if (getArguments() != null) {
             countryName = getArguments().getString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY);
             challengeKey = getArguments().getString(SectionsChallengePagerAdapter.CHALLENGE_KEY);
+            challengeName = getArguments().getString(SectionsChallengePagerAdapter.CHALLENGE_NAME);
         }
 
     }
@@ -156,7 +155,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
                     photoRef.collection("likes").document(userId).set(likeDoc);
                     photoModel.increment(1);
 
-                    sendNotification(photoModel.getUserId(),"");
+                    sendNotification(photoModel.getUserId());
 
                     challengePhotoAdapter.notifyDataSetChanged();
                 }
@@ -164,13 +163,13 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         });
     }
 
-    private void sendNotification(String targetUserId, String messageText){
+    private void sendNotification(String targetUserId){
 
 
         fmService.fetcUserToken(targetUserId, token -> {
 
             Log.d("FCM", "sendNotification: "+token);
-            SendNotificationModel sendNotificationModel = new SendNotificationModel("Someone like your photo", "Challenge: Maison");
+            SendNotificationModel sendNotificationModel = new SendNotificationModel("Someone like your photo", "Challenge: "+challengeName);
             RequestNotification requestNotificaton = new RequestNotification();
             requestNotificaton.setNotification(sendNotificationModel);
 

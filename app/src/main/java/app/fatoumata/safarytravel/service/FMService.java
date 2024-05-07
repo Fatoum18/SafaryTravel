@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 
 import app.fatoumata.safarytravel.models.fcm.FCMBody;
 import app.fatoumata.safarytravel.models.fcm.RequestNotification;
+
 import app.fatoumata.safarytravel.service.api.FcmApi;
 import feign.AsyncClient;
 import feign.AsyncFeign;
@@ -81,7 +82,13 @@ public class FMService extends FirebaseMessagingService {
 
             String token = documentSnapshot.getString("fcmAccessToken");
             if(token!=null){
-                fcmApi.sendNotification(new FCMBody(requestNotification),token).whenComplete((s, throwable) -> Log.d(TAG, "FCM notification sent "+s));
+                Log.d(TAG, "sendNoticationWithToken: "+token);
+                fcmApi.sendNotification(new FCMBody(requestNotification),token).whenComplete((s, throwable) -> {
+                    Log.d(TAG, "FCM notification sent "+s);
+                    if(throwable!=null){
+                        throwable.printStackTrace();
+                    }
+                });
             }
         });
 

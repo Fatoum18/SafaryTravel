@@ -78,6 +78,7 @@ public class CountryActivity extends AppCompatActivity {
         binding.toolbar.setNavigationOnClickListener(view -> finish());
 
         Bundle bundle = getIntent().getExtras();
+
         if(bundle!=null && bundle.containsKey(COUNTRY_NAME)){
             countryName = bundle.getString(COUNTRY_NAME);
             binding.toolbar.setTitle(countryName);
@@ -87,56 +88,12 @@ public class CountryActivity extends AppCompatActivity {
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
-            FloatingActionButton fab = binding.fab;
-            FirebaseUser user = getCurrentUser();
-            if(user!=null){
-                if(Objects.equals(user.getEmail(), "admin@safarytravel.com")){
-                    fab.setVisibility(View.VISIBLE);
-                    fab.setOnClickListener(view ->  createChallengeDialog());
-                }
-            }
+
         }
 
     }
 
 
-    private  void createChallengeDialog(){
-
-
-        EditText editText = new EditText(this);
-        editText.setHint("Challenge name");
-        AlertDialog.Builder builder =  new AlertDialog.Builder(this);
-        builder.setTitle("Challenge")
-                .setMessage("Create challenge in order to allow people to participate")
-                .setView(editText)
-                .setPositiveButton("Create", (dialogInterface, i) -> {
-
-                    String name =  editText.getText().toString();
-                    if(!TextUtils.isEmpty(name)){
-                        createChallenge(name);
-                    }else{
-                        Toast.makeText(this,"Challenge name must not be empty",Toast.LENGTH_SHORT)
-                                .show();
-                    }
-                })
-                .setNegativeButton("Cancel",(dialogInterface, i) -> {
-
-                }).show();
-    }
-
-    private  void createChallenge(String challengeName){
-
-        Map<String, Object> challenge =  new HashMap<>();
-        challenge.put("name",challengeName);
-        challenge.put("createAt", new Date());
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection(DBUtils.Collection.COUNTRIES)
-                .document(countryName)
-                .collection(DBUtils.Collection.CHALLENGES)
-                .add(challenge);
-    }
 
 
 

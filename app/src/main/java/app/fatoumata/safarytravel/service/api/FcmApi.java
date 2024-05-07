@@ -4,8 +4,6 @@ package app.fatoumata.safarytravel.service.api;
 import java.util.concurrent.CompletableFuture;
 
 import app.fatoumata.safarytravel.models.fcm.FCMBody;
-import app.fatoumata.safarytravel.models.fcm.RequestNotification;
-import app.fatoumata.safarytravel.models.fcm.SendNotificationModel;
 import feign.Body;
 import feign.Headers;
 import feign.Param;
@@ -21,7 +19,9 @@ public interface FcmApi {
             "Authorization: Bearer {fcm_access_token}"
     })
     @RequestLine("POST")
-     CompletableFuture<String> sendNotification(FCMBody requestBody, @Param("fcm_access_token") String fcmAccessToken );
+
+
+    CompletableFuture<Object> sendNotification(FCMBody requestBody, @Param("fcm_access_token") String fcmAccessToken );
 
 }
 

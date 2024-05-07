@@ -95,7 +95,7 @@ public class ChallengeActivity extends AppCompatActivity {
             final String challengeName = bundle.getString(CHALLENGE_NAME);
             binding.toolbar.setSubtitle(challengeName);
 
-            SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName,challengeKey);
+            SectionsChallengePagerAdapter sectionsPagerAdapter = new SectionsChallengePagerAdapter(this, getSupportFragmentManager(),countryName,challengeKey,challengeName);
             ViewPager viewPager = binding.viewPager;
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
