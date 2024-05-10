@@ -24,4 +24,5 @@
     <string name="capital">CAPITAL :</string>
     <string name="official_name">OFFICIAL NAME :</string>
     <string name="count_like">%d like</string>
+    <string name="default_notification_channel_id">app.fatoumata.safarytravel</string>
 </resources>
