@@ -3,27 +3,33 @@ package app.fatoumata.safarytravel;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.GridView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import android.Manifest;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -38,6 +44,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public class MainActivity extends AppCompatActivity implements  CountryAdapter.CountrAdapterListener{
 
     FirebaseAuth auth;
@@ -47,6 +54,33 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
     GridView countryGridView;
     ActivityMainBinding binding;
 
+
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // Permission is granted. Continue the action or workflow in your
+                    // app.
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(
+                                    binding.getRoot(),
+                                    "The user denied the notifications ):",
+                                    Snackbar.LENGTH_INDEFINITE
+                            )
+                            .setAction("Settings", view -> {
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.setData(Uri.parse("package:"+getString(R.string.app_package)));
+//                                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getString(R.string.app_package));
+
+                                startActivity(intent);
+                            }) .show();
+
+
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +89,13 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        createNotificationChannel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkPermission();
+        }else{
+            createNotificationChannel();
+        }
+
+
         auth = FirebaseAuth.getInstance();
         countryGridView = findViewById(R.id.gridCountry);
         user = auth.getCurrentUser();
@@ -153,5 +193,25 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
     public void onCountryClick(CountryModel countryModel) {
 
         CountryActivity.startActivity(this,countryModel);
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private void checkPermission(){
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED) {
+            Log.d("TAG-SAFARY", "checkPermission:  isGranted");
+            createNotificationChannel();
+        }
+        else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this, Manifest.permission.POST_NOTIFICATIONS)) {
+            requestPermissionLauncher.launch( Manifest.permission.POST_NOTIFICATIONS);
+        } else{
+            Log.d("TAG-SAFARY", "checkPermission:  NOT Granted");
+            // You can directly ask for the permission.
+            // The registered ActivityResultCallback gets the result of this request.
+            requestPermissionLauncher.launch( Manifest.permission.POST_NOTIFICATIONS);
+        }
     }
 }
