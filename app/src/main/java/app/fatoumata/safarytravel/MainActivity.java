@@ -1,6 +1,9 @@
 package app.fatoumata.safarytravel;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-
+        createNotificationChannel();
         auth = FirebaseAuth.getInstance();
         countryGridView = findViewById(R.id.gridCountry);
         user = auth.getCurrentUser();
@@ -116,6 +119,24 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         finish();
     }
 
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            String CHANNEL_ID = getString(R.string.default_notification_channel_id);
+            CharSequence name = getString(R.string.default_notification_channel_name);
+
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+
+            // Register the channel with the system. You can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
