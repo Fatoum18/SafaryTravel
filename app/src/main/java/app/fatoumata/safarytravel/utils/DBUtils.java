@@ -11,6 +11,7 @@ public class DBUtils {
 
     public static  class Collection{
         public static  final String COUNTRIES = "Countries";
+        public static  final String ALBUMS = "Countries";
         public static  final String CHALLENGES = "challenges";
     }
    public static FirebaseUser getCurrentUser(){

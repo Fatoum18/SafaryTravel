@@ -147,7 +147,6 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
                     photoRef.update("countLike", FieldValue.increment(-1));
                     photoRef.collection("likes").document(userId).delete();
                     photoModel.increment(-1);
-                    challengePhotoAdapter.notifyDataSetChanged();
                 }else{
                     photoRef.update("countLike", FieldValue.increment(1));
                     Map<String, Object> likeDoc =  new HashMap<>();
@@ -157,8 +156,9 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
 
                     sendNotification(photoModel.getUserId());
 
-                    challengePhotoAdapter.notifyDataSetChanged();
                 }
+                updateMostLikedPhoto();
+                challengePhotoAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -179,5 +179,18 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
             fmService.sendNotification(requestNotificaton);
         });
 
+    }
+
+    private void updateMostLikedPhoto(){
+
+        CollectionReference collectionSafary = db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.ALBUMS);
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/"+DBUtils.Collection.COUNTRIES + "/" + countryName +"/photos");
+        collectionChallenges.orderBy("countLike", Query.Direction.DESCENDING).limit(1).get().addOnCompleteListener(task -> {
+            QuerySnapshot snapshot = task.getResult();
+            List<DocumentSnapshot> documentSnapshots = snapshot.getDocuments();
+            if(!documentSnapshots.isEmpty()){
+                collectionSafary.document(challengeKey).set(documentSnapshots.get(0));
+            }
+        }) ;
     }
 }
