@@ -134,7 +134,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         String userId =  user.getUid();
 
 
-        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES + "/" + countryName + "/" + DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/photos");
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.CHALLENGES+"/"+challengeKey+"/"+DBUtils.Collection.COUNTRIES + "/" + countryName +"/photos");
 
         DocumentReference photoRef = collectionChallenges.document(photoModel.getId());
         photoRef.collection("likes").document(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
