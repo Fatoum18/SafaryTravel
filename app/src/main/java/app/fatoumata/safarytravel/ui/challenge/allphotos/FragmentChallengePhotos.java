@@ -189,8 +189,12 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
             QuerySnapshot snapshot = task.getResult();
             List<DocumentSnapshot> documentSnapshots = snapshot.getDocuments();
             if(!documentSnapshots.isEmpty()){
-                collectionSafary.document(challengeKey).set(documentSnapshots.get(0));
+
+                DocumentSnapshot data = documentSnapshots.get(0);
+                Map<String, Object> album =  data.getData();
+                album.put("challengeName", challengeName);
+                collectionSafary.document(challengeKey).set(album);
             }
-        }) ;
+        });
     }
 }
