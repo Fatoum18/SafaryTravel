@@ -11,7 +11,7 @@
     <string name="separator">----------------- Or---------------------</string>
     <string name="menu_logout">Logout</string>
     <string name="m_profil">My profil</string>
-    <string name="home_title">Choose country were to go</string>
+    <string name="home_title">Welcome <b>%s</b>, Choose the country you wanted to go to</string>
     <string name="title_activity_country">CountryActivity</string>
     <string name="tab_country_info">Info</string>
     <string name="tab_all_photos">Photos</string>
@@ -33,4 +33,6 @@
     <string name="default_notification_channel_id">app.fatoumata.safarytravel</string>
     <string name="default_notification_channel_name">Safari Travel Channel</string>
     <string name="app_package">app.fatoumata.safarytravel</string>
+    <string name="first_run">Complete your profile</string>
+    <string name="btn_save">Save</string>
 </resources>

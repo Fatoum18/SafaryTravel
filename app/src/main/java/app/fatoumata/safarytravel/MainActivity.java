@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
 
     FirebaseUser user;
 
-    GridView countryGridView;
     ActivityMainBinding binding;
 
 
@@ -98,17 +97,11 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
 
 
         auth = FirebaseAuth.getInstance();
-        countryGridView = findViewById(R.id.gridCountry);
         user = auth.getCurrentUser();
-        if(user == null)
-        {
 
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
 
+
+        binding.homeTitle.setText(getString(R.string.home_title, user.getDisplayName()));
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().getToken()
@@ -136,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
                 if(response.body()!=null){
                     List<CountryModel> list =    Converter.countryDtosToModels(response.body());
                     CountryAdapter countryAdapter =  new CountryAdapter(MainActivity.this,list,MainActivity.this);
-                    countryGridView.setAdapter(countryAdapter);
+                    binding.gridCountry.setAdapter(countryAdapter);
 
                 }
             }
