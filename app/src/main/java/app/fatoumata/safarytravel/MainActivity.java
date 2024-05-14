@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -82,6 +83,22 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
             });
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+
+
+        if(user != null && TextUtils.isEmpty(user.getDisplayName())){
+            Intent intent = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                intent = new Intent(getApplicationContext(), FirstRunActivity.class);
+                startActivity(intent);
+                finish();
+            }
+
+        }
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        EdgeToEdge.enable(this);
@@ -105,21 +122,18 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("FCM", "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        FMService.registerDevice(token);
-
-                        Log.i("FCM", token);
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                        return;
                     }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    FMService.registerDevice(token);
+
+                    Log.i("FCM", token);
                 });
 
         CountryService.api.getCountryOfRegion("europe").enqueue(new Callback<List<CountryOfRegionDto>>() {
