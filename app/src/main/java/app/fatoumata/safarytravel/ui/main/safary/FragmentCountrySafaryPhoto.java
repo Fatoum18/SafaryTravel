@@ -6,31 +6,45 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
+import app.fatoumata.safarytravel.adapters.SafaryPhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentCountrySafaryBinding;
 import app.fatoumata.safarytravel.models.PhotoModel;
+import app.fatoumata.safarytravel.models.SafaryModel;
+import app.fatoumata.safarytravel.ui.challenge.BaseFragment;
+import app.fatoumata.safarytravel.ui.challenge.SectionsChallengePagerAdapter;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
+import app.fatoumata.safarytravel.utils.DBUtils;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePhotoAdapter.Listener {
+public class FragmentCountrySafaryPhoto extends BaseFragment {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
-    private PageViewModel pageViewModel;
+
+    SafaryPhotoAdapter challengePhotoAdapter;
     private FragmentCountrySafaryBinding binding;
-
-    public static FragmentCountrySafaryPhoto newInstance(int index) {
+    FirebaseFirestore db ;
+    public static FragmentCountrySafaryPhoto newInstance(String countryName) {
         FragmentCountrySafaryPhoto fragment = new FragmentCountrySafaryPhoto();
         Bundle bundle = new Bundle();
-        bundle.putInt(ARG_SECTION_NUMBER, index);
+        bundle.putString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY, countryName);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -38,12 +52,10 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
-        int index = 1;
+        db = FirebaseFirestore.getInstance();
         if (getArguments() != null) {
-            index = getArguments().getInt(ARG_SECTION_NUMBER);
+            countryName = getArguments().getString(SectionsChallengePagerAdapter.COUNTRY_NAME_KEY);
         }
-        pageViewModel.setIndex(index);
     }
 
     @Override
@@ -55,14 +67,15 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
         View root = binding.getRoot();
 
 
-        List<PhotoModel> list =    new ArrayList<>();
-        list.add(new PhotoModel("","https://loremflickr.com/640/480/animals"));
-        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/animals"));
-        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/cats"));
-        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/city"));
-        list.add(new PhotoModel("","https://loremflickr.com/1234/2345/nature"));
-        ChallengePhotoAdapter challengePhotoAdapter =  new ChallengePhotoAdapter(requireActivity(),list,this,null);
-        binding.gridPhotoChallenge.setAdapter(challengePhotoAdapter);
+        CollectionReference collectionChallenges = db.collection(DBUtils.Collection.COUNTRIES+"/"+countryName+"/"+DBUtils.Collection.ALBUMS );
+        collectionChallenges.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                fetchPhoto(collectionChallenges);
+
+            }
+        });
+        fetchPhoto(collectionChallenges);
 
 
         return root;
@@ -74,8 +87,23 @@ public class FragmentCountrySafaryPhoto extends Fragment  implements ChallengePh
         binding = null;
     }
 
-    @Override
-    public void onThumbClick(PhotoModel countryModel) {
+    private void fetchPhoto(CollectionReference collectionChallenges){
 
+        collectionChallenges.orderBy("createdAt", Query.Direction.DESCENDING).get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+            List<SafaryModel> list =  new ArrayList<>();
+            List<DocumentSnapshot> list1 = queryDocumentSnapshots.getDocuments();
+            for(DocumentSnapshot snapshot  : list1){
+                SafaryModel safaryModel = snapshot.toObject(SafaryModel.class);
+                if(safaryModel!=null){
+                    safaryModel.setId(snapshot.getId());
+                    list.add(safaryModel);
+                }
+
+            }
+
+            challengePhotoAdapter =  new SafaryPhotoAdapter(requireActivity(),list);
+            binding.gridPhotoChallenge.setAdapter(challengePhotoAdapter);
+        });
     }
 }

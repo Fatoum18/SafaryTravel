@@ -35,7 +35,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         if(position == 0)  return   FragmentCountryInfo.newInstance(countryName);
-        if(position == 1)  return  new FragmentCountrySafaryPhoto();
+        if(position == 1)  return  FragmentCountrySafaryPhoto.newInstance(countryName);
         if(position == 2)  return FragmentCountryChallenge.newInstance(countryName);
 
         return null;
