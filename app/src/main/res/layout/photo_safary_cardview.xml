@@ -41,19 +41,24 @@
                 android:layout_width="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_horizontal|center_vertical"
-
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:padding="10dp"
-                    android:clickable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:id="@+id/buttonLike"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    android:src="@drawable/baseline_thumb_up_24"
-                    android:focusable="true" />
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    tools:text="John"
+                    tools:ignore="SmallSp" />
+
+                <View
+
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/cardview_dark_background"
+                    />
 
                 <TextView
                     android:id="@+id/countLike"
@@ -61,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textAlignment="center"
+                    tools:text="2 likes"
                     tools:ignore="SmallSp" />
             </LinearLayout>
 

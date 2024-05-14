@@ -41,11 +41,13 @@ public class SafaryPhotoAdapter extends ArrayAdapter<SafaryModel> {
          if(safaryModel!=null){
 
 
+             TextView usernameView =  view.findViewById(R.id.username);
              TextView countLikeView =  view.findViewById(R.id.countLike);
              TextView safaryTitleView =  view.findViewById(R.id.safaryTitle);
              ImageView photoView =  view.findViewById(R.id.photoUrl);
              countLikeView.setText(context.getResources().getQuantityString(R.plurals.count_like, safaryModel.getCountLike(),safaryModel.getCountLike()));
              safaryTitleView.setText(safaryModel.getChallengeName());
+             usernameView.setText(safaryModel.getName());
 
 
              Glide.with(view).load(safaryModel.getUrl()).into(photoView);
