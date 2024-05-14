@@ -7,33 +7,21 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import app.fatoumata.safarytravel.ChallengeActivity;
-import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentCountryChallengeBinding;
 import app.fatoumata.safarytravel.models.Challenge;
-import app.fatoumata.safarytravel.models.CountryModel;
-import app.fatoumata.safarytravel.models.PhotoModel;
 import app.fatoumata.safarytravel.ui.main.BaseFragment;
 import app.fatoumata.safarytravel.ui.main.PageViewModel;
 import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
-import app.fatoumata.safarytravel.ui.main.challenge.adapter.ChallengeAdapter;
-import app.fatoumata.safarytravel.ui.main.info.FragmentCountryInfo;
 import app.fatoumata.safarytravel.utils.DBUtils;
 
 /**

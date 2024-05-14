@@ -47,11 +47,12 @@ public class ChallengePhotoAdapter extends ArrayAdapter<PhotoModel> {
          if(photoModel!=null){
 
              boolean isMe = photoModel.getUserId() != null && photoModel.getUserId().equals(currentUserId);
+             TextView usernameView =  view.findViewById(R.id.username);
              TextView countLikeView =  view.findViewById(R.id.countLike);
              ImageView imageViewLike =  view.findViewById(R.id.buttonLike);
              ImageView photoView =  view.findViewById(R.id.photoUrl);
-             countLikeView.setText(context.getString(R.string.count_like,photoModel.getCountLike()));
-
+             countLikeView.setText(context.getResources().getQuantityString(R.plurals.count_like,photoModel.getCountLike(),photoModel.getCountLike()));
+             usernameView.setText(photoModel.getName());
              imageViewLike.setVisibility(isMe ? View.GONE :  View.VISIBLE);
              Glide.with(view).load(photoModel.getUrl()).into(photoView);
 

@@ -44,7 +44,7 @@ public class SafaryPhotoAdapter extends ArrayAdapter<SafaryModel> {
              TextView countLikeView =  view.findViewById(R.id.countLike);
              TextView safaryTitleView =  view.findViewById(R.id.safaryTitle);
              ImageView photoView =  view.findViewById(R.id.photoUrl);
-             countLikeView.setText(context.getString(R.string.count_like,safaryModel.getCountLike()));
+             countLikeView.setText(context.getResources().getQuantityString(R.plurals.count_like, safaryModel.getCountLike(),safaryModel.getCountLike()));
              safaryTitleView.setText(safaryModel.getChallengeName());
 
 

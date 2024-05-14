@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
@@ -101,11 +102,13 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
         user = auth.getCurrentUser();
         if(user == null)
         {
+
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
             return;
         }
+
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().getToken()

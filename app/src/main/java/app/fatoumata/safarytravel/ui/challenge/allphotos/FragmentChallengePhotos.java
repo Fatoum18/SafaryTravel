@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import app.fatoumata.safarytravel.R;
 import app.fatoumata.safarytravel.adapters.ChallengePhotoAdapter;
 import app.fatoumata.safarytravel.databinding.FragmentChallengePhotosBinding;
 import app.fatoumata.safarytravel.models.PhotoModel;
@@ -154,7 +155,7 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
                     photoRef.collection("likes").document(userId).set(likeDoc);
                     photoModel.increment(1);
 
-                    sendNotification(photoModel.getUserId());
+                    sendNotification(photoModel.getUserId(), user.getDisplayName());
 
                 }
                 updateMostLikedPhoto();
@@ -163,13 +164,13 @@ public class FragmentChallengePhotos extends BaseFragment implements ChallengePh
         });
     }
 
-    private void sendNotification(String targetUserId){
+    private void sendNotification(String targetUserId,  String displaName){
 
 
         fmService.fetcUserToken(targetUserId, token -> {
 
             Log.d("FCM", "sendNotification: "+token);
-            SendNotificationModel sendNotificationModel = new SendNotificationModel("Someone like your photo", "Challenge: "+challengeName);
+            SendNotificationModel sendNotificationModel = new SendNotificationModel(getString(R.string.notification_body,displaName), getString(R.string.notification_title,challengeName));
             RequestNotification requestNotificaton = new RequestNotification();
             requestNotificaton.setNotification(sendNotificationModel);
 
