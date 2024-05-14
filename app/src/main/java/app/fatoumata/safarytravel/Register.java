@@ -59,7 +59,6 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
-        editTextName = findViewById(R.id.name);
         buttonReg = findViewById(R.id.btn_register);
         progressBar = findViewById(R.id.progressBar);
         textView = findViewById(R.id.loginNow);
@@ -80,13 +79,9 @@ public class Register extends AppCompatActivity {
                 String email, password, name;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
-                name = String.valueOf(editTextName.getText());
 
-                if (TextUtils.isEmpty(name))
-                {
-                    Toast.makeText(Register.this, "Enter name", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+
+
                 if (TextUtils.isEmpty(email))
                 {
                     Toast.makeText(Register.this, "Enter email", Toast.LENGTH_SHORT).show();
