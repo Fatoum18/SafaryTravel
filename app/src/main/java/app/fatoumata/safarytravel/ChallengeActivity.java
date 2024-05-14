@@ -3,7 +3,6 @@ package app.fatoumata.safarytravel;
 import static app.fatoumata.safarytravel.utils.DBUtils.getCurrentUser;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -26,7 +24,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,11 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import app.fatoumata.safarytravel.databinding.ActivityChallengeBinding;
-import app.fatoumata.safarytravel.databinding.ActivityCountryBinding;
-import app.fatoumata.safarytravel.models.CountryModel;
 import app.fatoumata.safarytravel.ui.challenge.SectionsChallengePagerAdapter;
-import app.fatoumata.safarytravel.ui.main.SectionsPagerAdapter;
-import app.fatoumata.safarytravel.ui.main.challenge.adapter.ChallengeAdapter;
 import app.fatoumata.safarytravel.utils.DBUtils;
 
 
