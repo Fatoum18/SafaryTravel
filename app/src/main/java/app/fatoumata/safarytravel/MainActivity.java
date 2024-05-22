@@ -144,13 +144,14 @@ public class MainActivity extends AppCompatActivity implements  CountryAdapter.C
                     List<CountryModel> list =    Converter.countryDtosToModels(response.body());
                     CountryAdapter countryAdapter =  new CountryAdapter(MainActivity.this,list,MainActivity.this);
                     binding.gridCountry.setAdapter(countryAdapter);
-
+                    binding.progressBar.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<List<CountryOfRegionDto>> call, Throwable throwable) {
 
+                Log.d("TAG", "onFailure: "+throwable.getMessage());
             }
         });
 

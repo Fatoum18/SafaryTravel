@@ -23,23 +23,34 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
-
         >
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
 
-        <TextView
-            android:id="@+id/home_title"
-            android:layout_width="wrap_content"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="14dp"
-            android:textAlignment="center"
-            android:text="@string/home_title"/>
+            android:orientation="vertical"
+
+            >
+
+            <TextView
+                android:id="@+id/home_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:padding="14dp"
+                android:textAlignment="center"
+                android:text="@string/home_title"/>
 
             <GridView
                 android:id="@+id/gridCountry"
@@ -52,7 +63,9 @@
                 android:paddingEnd="16dp"
                 android:layout_marginBottom="100dp"
                 />
-    </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
